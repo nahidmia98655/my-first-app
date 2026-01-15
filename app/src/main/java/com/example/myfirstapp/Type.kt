@@ -2,23 +2,9 @@ package com.example.myfirstapp.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 
+// Set of Material typography styles to start with
 val Typography = Typography(
-    bodyLarge = androidx.compose.ui.text.TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
-    ),
-    titleLarge = androidx.compose.ui.text.TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
-    )
-    // Add other text styles as needed
+    // You can customize the default typography here if needed
+    // For simplicity we keep the defaults
 )

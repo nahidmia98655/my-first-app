@@ -1,14 +1,20 @@
-package com.example.myfirstapp.repository
+package com.example.myfirstapp.data
 
-import com.example.myfirstapp.data.Note
-import com.example.myfirstapp.data.NoteDao
+import com.example.myfirstapp.data.local.NoteDao
+import com.example.myfirstapp.data.local.NoteEntity
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
-class NoteRepository(private val dao: NoteDao) {
-    val allNotes: Flow<List<Note>> = dao.getAllNotes()
+class NoteRepository @Inject constructor(
+    private val noteDao: NoteDao
+) {
+    fun getAllNotes(): Flow<List<NoteEntity>> = noteDao.getAllNotes()
 
-    suspend fun getNoteById(id: Int): Note? = dao.getNoteById(id)
-    suspend fun insert(note: Note) = dao.insert(note)
-    suspend fun update(note: Note) = dao.update(note)
-    suspend fun delete(note: Note) = dao.delete(note)
+    suspend fun getNoteById(id: Long): NoteEntity? = noteDao.getNoteById(id)
+
+    suspend fun insert(note: NoteEntity): Long = noteDao.insert(note)
+
+    suspend fun update(note: NoteEntity) = noteDao.update(note)
+
+    suspend fun delete(note: NoteEntity) = noteDao.delete(note)
 }
