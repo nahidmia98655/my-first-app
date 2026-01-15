@@ -2,7 +2,7 @@ package com.example.myfirstapp.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myfirstapp.data.NoteEntity
+import com.example.myfirstapp.data.Note
 import com.example.myfirstapp.data.NoteRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -10,35 +10,23 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class NoteViewModel(private val repository: NoteRepository) : ViewModel() {
-
-    val allNotes: StateFlow<List<NoteEntity>> = repository.getAllNotes()
+    val notes: StateFlow<List<Note>> = repository.allNotes
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
-    fun getNoteById(id: Long) = repository.getNoteById(id)
-
-    fun insertNote(title: String, content: String) {
+    fun addNote(title: String, content: String) {
         viewModelScope.launch {
-            val note = NoteEntity(title = title, content = content)
-            repository.insert(note)
+            repository.insert(Note(title = title, content = content))
         }
     }
 
-    fun updateNote(id: Long, title: String, content: String) {
+    fun updateNote(note: Note) {
         viewModelScope.launch {
-            val updated = NoteEntity(
-                id = id,
-                title = title,
-                content = content,
-                timestamp = System.currentTimeMillis()
-            )
-            repository.update(updated)
+            repository.update(note)
         }
     }
 
-    fun deleteNote(id: Long) {
+    fun deleteNote(note: Note) {
         viewModelScope.launch {
-            // Fetch the note to delete (simplified by creating a stub with the id)
-            val note = NoteEntity(id = id, title = "", content = "", timestamp = 0)
             repository.delete(note)
         }
     }

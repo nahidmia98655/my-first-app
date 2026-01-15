@@ -1,4 +1,3 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -48,6 +47,12 @@ android {
 }
 
 dependencies {
+    implementation(libs.navigation.fragment)
+implementation(libs.navigation.ui)
+implementation(libs.navigation.compose)
+    implementation(libs.room.runtime)
+implementation(libs.room.ktx)
+kapt(libs.room.compiler)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -58,14 +63,6 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material.icons.extended)
-
-    // Navigation Compose
-    implementation(libs.androidx.navigation.compose)
-
-    // Room (for any future data persistence – currently unused but added to resolve potential imports)
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
