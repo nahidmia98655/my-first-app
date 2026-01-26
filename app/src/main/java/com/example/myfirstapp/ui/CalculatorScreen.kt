@@ -1,114 +1,180 @@
 package com.example.myfirstapp.ui
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.myfirstapp.viewmodel.CalculatorViewModel
+import com.example.myfirstapp.CalculatorViewModel
 
-private data class CalcButton(val label: String, val weight: Float = 1f, val isOperator: Boolean = false)
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalculatorScreen(viewModel: CalculatorViewModel) {
-    var display by remember { mutableStateOf(viewModel.display) }
-
-    // Observe ViewModel changes
-    viewModel.displayState.observeForever { display = it }
-
-    val buttons = listOf(
-        listOf(CalcButton("C", isOperator = true), CalcButton("±", isOperator = true), CalcButton("%", isOperator = true), CalcButton("÷", isOperator = true, weight = 1f)),
-        listOf(CalcButton("7"), CalcButton("8"), CalcButton("9"), CalcButton("×", isOperator = true)),
-        listOf(CalcButton("4"), CalcButton("5"), CalcButton("6"), CalcButton("-", isOperator = true)),
-        listOf(CalcButton("1"), CalcButton("2"), CalcButton("3"), CalcButton("+", isOperator = true)),
-        listOf(CalcButton("0", weight = 2f), CalcButton(".", weight = 1f), CalcButton("=", isOperator = true))
-    )
-
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text("Calculator", fontWeight = FontWeight.Bold)
+                }
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.background
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(paddingValues)
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Display
+            DisplaySection(value = viewModel.display)
+            Spacer(modifier = Modifier.height(8.dp))
+            ButtonGrid(viewModel = viewModel)
+        }
+    }
+}
+
+@Composable
+private fun DisplaySection(value: String) {
+    Surface(
+        shape = RoundedCornerShape(12.dp),
+        tonalElevation = 4.dp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(80.dp)
+    ) {
+        Box(
+            contentAlignment = Alignment.CenterEnd,
+            modifier = Modifier.padding(16.dp)
+        ) {
             Text(
-                text = display,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(8.dp)
-                    .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(8.dp))
-                    .padding(24.dp)
-                    .animateContentSize(),
-                style = MaterialTheme.typography.displayLarge.copy(
-                    fontSize = 48.sp,
-                    fontWeight = FontWeight.Light,
-                    textAlign = TextAlign.End,
-                    color = MaterialTheme.colorScheme.onSurface
+                text = value,
+                style = MaterialTheme.typography.displayMedium.copy(
+                    fontSize = 36.sp,
+                    fontWeight = FontWeight.Light
                 ),
+                textAlign = TextAlign.End,
                 maxLines = 1
             )
-
-            // Buttons Grid
-            buttons.forEach { row ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    row.forEach { button ->
-                        val backgroundColor = if (button.isOperator) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
-                        val contentColor = if (button.isOperator) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
-                        ElevatedButton(
-                            onClick = { viewModel.onButtonClick(button.label) },
-                            modifier = Modifier
-                                .weight(button.weight)
-                                .height(64.dp),
-                            colors = ButtonDefaults.elevatedButtonColors(
-                                containerColor = backgroundColor,
-                                contentColor = contentColor
-                            ),
-                            shape = RoundedCornerShape(12.dp),
-                            elevation = ButtonDefaults.elevatedButtonElevation(defaultElevation = 4.dp)
-                        ) {
-                            Text(
-                                text = button.label,
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Medium
-                            )
-                        }
-                    }
-                }
-            }
         }
+    }
+}
+
+@Composable
+private fun ButtonGrid(viewModel: CalculatorViewModel) {
+    val buttonModifier = Modifier
+        .size(80.dp)
+        .padding(4.dp)
+
+    val buttonShape = RoundedCornerShape(12.dp)
+    val buttonColors = ButtonDefaults.buttonColors(
+        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+
+    val operatorColors = ButtonDefaults.buttonColors(
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary
+    )
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        // Row 1
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            CalculatorButton(text = "C", onClick = { viewModel.onClear() }, modifier = buttonModifier, colors = buttonColors)
+            CalculatorButton(text = "÷", onClick = { viewModel.onOperatorClick('÷') }, modifier = buttonModifier, colors = operatorColors)
+            CalculatorButton(text = "×", onClick = { viewModel.onOperatorClick('×') }, modifier = buttonModifier, colors = operatorColors)
+            CalculatorButton(text = "←", onClick = { /* optional backspace */ }, modifier = buttonModifier, colors = buttonColors)
+        }
+        // Row 2
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            listOf('7', '8', '9').forEach { digit ->
+                CalculatorButton(
+                    text = digit.toString(),
+                    onClick = { viewModel.onNumberClick(digit) },
+                    modifier = buttonModifier,
+                    colors = buttonColors
+                )
+            }
+            CalculatorButton(text = "-", onClick = { viewModel.onOperatorClick('-') }, modifier = buttonModifier, colors = operatorColors)
+        }
+        // Row 3
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            listOf('4', '5', '6').forEach { digit ->
+                CalculatorButton(
+                    text = digit.toString(),
+                    onClick = { viewModel.onNumberClick(digit) },
+                    modifier = buttonModifier,
+                    colors = buttonColors
+                )
+            }
+            CalculatorButton(text = "+", onClick = { viewModel.onOperatorClick('+') }, modifier = buttonModifier, colors = operatorColors)
+        }
+        // Row 4
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            listOf('1', '2', '3').forEach { digit ->
+                CalculatorButton(
+                    text = digit.toString(),
+                    onClick = { viewModel.onNumberClick(digit) },
+                    modifier = buttonModifier,
+                    colors = buttonColors
+                )
+            }
+            CalculatorButton(text = "=", onClick = { viewModel.onEqualsClick() }, modifier = buttonModifier, colors = operatorColors)
+        }
+        // Row 5
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            CalculatorButton(text = "0", onClick = { viewModel.onNumberClick('0') }, modifier = Modifier
+                .weight(1f)
+                .height(80.dp)
+                .padding(4.dp), colors = buttonColors)
+            CalculatorButton(text = ".", onClick = { viewModel.onNumberClick('.') }, modifier = buttonModifier, colors = buttonColors)
+        }
+    }
+}
+
+@Composable
+private fun CalculatorButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    colors: ButtonColors = ButtonDefaults.buttonColors()
+) {
+    Button(
+        onClick = onClick,
+        shape = RoundedCornerShape(12.dp),
+        colors = colors,
+        modifier = modifier,
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp, pressedElevation = 4.dp)
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.SemiBold
+        )
     }
 }

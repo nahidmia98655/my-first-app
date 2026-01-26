@@ -1,5 +1,4 @@
 plugins {
-    alias(libs.plugins.android)
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
@@ -48,14 +47,6 @@ android {
 }
 
 dependencies {
-    implementation(libs.hilt.android)
-kapt(libs.hilt.compiler)
-    implementation(libs.navigation.fragment)
-implementation(libs.navigation.ui)
-implementation(libs.navigation.compose)
-    implementation(libs.room.runtime)
-implementation(libs.room.ktx)
-kapt(libs.room.compiler)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
