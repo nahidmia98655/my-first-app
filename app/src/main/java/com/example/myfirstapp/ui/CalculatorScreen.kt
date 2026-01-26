@@ -1,4 +1,12 @@
 package com.example.myfirstapp.ui
+import android.widget.Button
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.Surface
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
